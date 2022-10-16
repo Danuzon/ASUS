@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace WebApplication1.Models
 {
-    public class Department
+    public class PetrolShed
     {
         public ObjectId Id { get; set; }
-        public int DepartmentId { get; set; }
-        public string DepartmentName { get; set; }
+        public int PetrolShedId { get; set; }
+        public string PetrolShedName { get; set; }
+        public float AvailableQuantity { get; set; }
     }
 }

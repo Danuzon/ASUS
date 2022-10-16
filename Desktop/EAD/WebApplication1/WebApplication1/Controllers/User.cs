@@ -14,12 +14,12 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class UserController : ControllerBase
     {
 
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
-        public EmployeeController(IConfiguration configuration, IWebHostEnvironment env)
+        public UserController(IConfiguration configuration, IWebHostEnvironment env)
         {
             _configuration = configuration;
             _env = env;
@@ -28,39 +28,39 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EmployeeAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var dbList = dbClient.GetDatabase("testdb").GetCollection<Employee>("Employee").AsQueryable();
+            var dbList = dbClient.GetDatabase("testdb").GetCollection<User>("User").AsQueryable();
 
             return new JsonResult(dbList);
         }
 
         [HttpPost]
-        public JsonResult Post(Employee emp)
+        public JsonResult Post(User emp)
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EmployeeAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            int LastEmployeeId = dbClient.GetDatabase("testdb").GetCollection<Department>("Employee").AsQueryable().Count();
-            emp.EmployeeId = LastEmployeeId + 1;
+            int LastUserId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("User").AsQueryable().Count();
+            emp.UserId = LastUserId + 1;
 
-            dbClient.GetDatabase("testdb").GetCollection<Employee>("Employee").InsertOne(emp);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").InsertOne(emp);
 
             return new JsonResult("Added Successfully");
         }
 
         [HttpPut]
-        public JsonResult Put(Employee emp)
+        public JsonResult Put(User emp)
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EmployeeAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("UserAppCon"));
 
-            var filter = Builders<Employee>.Filter.Eq("EmployeeId", emp.EmployeeId);
+            var filter = Builders<User>.Filter.Eq("UserId", emp.UserId);
 
-            var update = Builders<Employee>.Update.Set("EmployeeName", emp.EmployeeName)
-                                                    .Set("Department", emp.Department)
-                                                    .Set("DateOfJoining", emp.DateOfJoining)
-                                                    .Set("PhotoFileName", emp.PhotoFileName);
+            var update = Builders<User>.Update.Set("UserName", emp.UserName)
+                                                    .Set("PetrolShed", emp.PetrolShed)
+                                                    .Set("PetrolFillStatus", emp.PetrolFillStatus)
+                                                    .Set("PetrolFillQuantity", emp.PetrolFillQuantity);
 
-            dbClient.GetDatabase("testdb").GetCollection<Employee>("Employee").UpdateOne(filter, update);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(filter, update);
 
             return new JsonResult("Updated Successfully");
         }
@@ -69,12 +69,12 @@ namespace WebApplication1.Controllers
         [HttpDelete("{id}")]
         public JsonResult Delete(int id)
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EmployeeAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("UserAppCon"));
 
-            var filter = Builders<Employee>.Filter.Eq("EmployeeId", id);
+            var filter = Builders<User>.Filter.Eq("UserId", id);
 
 
-            dbClient.GetDatabase("testdb").GetCollection<Employee>("Employee").DeleteOne(filter);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").DeleteOne(filter);
 
             return new JsonResult("Deleted Successfully");
         }
