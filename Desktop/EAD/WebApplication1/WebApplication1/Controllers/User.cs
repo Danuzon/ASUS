@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,8 +42,8 @@ namespace WebApplication1.Controllers
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            int LastUserId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("User").AsQueryable().Count();
-            emp.UserId = LastUserId + 1;
+           // int LastUserId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("User").AsQueryable().Count();
+           // emp.UserId = LastUserId + 1;
 
             dbClient.GetDatabase("testdb").GetCollection<User>("User").InsertOne(emp);
 
@@ -51,7 +53,7 @@ namespace WebApplication1.Controllers
         [HttpPut]
         public JsonResult Put(User emp)
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("UserAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
             var filter = Builders<User>.Filter.Eq("UserId", emp.UserId);
 
@@ -69,7 +71,7 @@ namespace WebApplication1.Controllers
         [HttpDelete("{id}")]
         public JsonResult Delete(int id)
         {
-            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("UserAppCon"));
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
             var filter = Builders<User>.Filter.Eq("UserId", id);
 
@@ -103,6 +105,20 @@ namespace WebApplication1.Controllers
 
                 return new JsonResult("anonymous.png");
             }
+        }
+
+        [Route("count/{id}")]
+        [HttpGet]
+        public JsonResult GetCountUserInQueue(String id)
+        {
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
+
+           // var filter = "{PetrolFillStatus:join}";
+
+            var dbList = dbClient.GetDatabase("testdb").GetCollection<User>("User").Find(s => s.PetrolFillStatus == "join" && s.PetrolShed == id).ToList();
+
+            return new JsonResult(dbList);
+           // return new JsonResult(10);
         }
 
 

@@ -35,8 +35,8 @@ namespace WebApplication1.Controllers
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            int LastPetrolShedId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("PetrolShed").AsQueryable().Count();
-            dep.PetrolShedId = LastPetrolShedId + 1;
+            // int LastPetrolShedId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("PetrolShed").AsQueryable().Count();
+            // dep.PetrolShedId = LastPetrolShedId + 1;
 
             dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("PetrolShed").InsertOne(dep);
 
@@ -61,7 +61,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpDelete("{id}")]
-        public JsonResult Delete(int id)
+        public JsonResult Delete(String id)
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
