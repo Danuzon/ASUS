@@ -10,13 +10,13 @@ namespace WebApplication1.Models
     {
         public ObjectId Id { get; set; }
 
-        public int UserId { get; set; }
-
         public string UserName { get; set; }
 
         public string PetrolShed { get; set; }
 
         public string PetrolFillStatus { get; set; }
+
+        public string VehicleType { get; set; }
 
         public float PetrolFillQuantity { get; set; }
     }

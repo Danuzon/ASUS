@@ -38,29 +38,31 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public JsonResult Post(User emp)
+        public JsonResult Post(User usr)
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
            // int LastUserId = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("User").AsQueryable().Count();
            // emp.UserId = LastUserId + 1;
 
-            dbClient.GetDatabase("testdb").GetCollection<User>("User").InsertOne(emp);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").InsertOne(usr);
 
             return new JsonResult("Added Successfully");
         }
 
         [HttpPut]
-        public JsonResult Put(User emp)
+        public JsonResult Put(User usr)
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var filter = Builders<User>.Filter.Eq("UserId", emp.UserId);
+            var filter = Builders<User>.Filter.Eq("UserName", usr.UserName);
 
-            var update = Builders<User>.Update.Set("UserName", emp.UserName)
-                                                    .Set("PetrolShed", emp.PetrolShed)
-                                                    .Set("PetrolFillStatus", emp.PetrolFillStatus)
-                                                    .Set("PetrolFillQuantity", emp.PetrolFillQuantity);
+          //  var update = Builders<User>.Update.Set("UserName", emp.UserName)
+          //                                          .Set("PetrolShed", emp.PetrolShed)
+          //                                          .Set("PetrolFillStatus", emp.PetrolFillStatus)
+          //                                          .Set("PetrolFillQuantity", emp.PetrolFillQuantity);
+            var update = Builders<User>.Update.Set("PetrolFillQuantity", usr.PetrolFillQuantity)
+                                                .Set("PetrolFillStatus", usr.PetrolFillStatus);
 
             dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(filter, update);
 
@@ -68,12 +70,12 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpDelete("{id}")]
-        public JsonResult Delete(int id)
+        [HttpDelete("{userName}")]
+        public JsonResult Delete(String userName)
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var filter = Builders<User>.Filter.Eq("UserId", id);
+            var filter = Builders<User>.Filter.Eq("UserName", userName);
 
 
             dbClient.GetDatabase("testdb").GetCollection<User>("User").DeleteOne(filter);
@@ -82,40 +84,16 @@ namespace WebApplication1.Controllers
         }
 
 
-        [Route("SaveFile")]
-        [HttpPost]
-        public JsonResult SaveFile()
-        {
-            try
-            {
-                var httpRequest = Request.Form;
-                var postedFile = httpRequest.Files[0];
-                string filename = postedFile.FileName;
-                var physicalPath = _env.ContentRootPath + "/Photos/" + filename;
 
-                using (var stream = new FileStream(physicalPath, FileMode.Create))
-                {
-                    postedFile.CopyTo(stream);
-                }
-
-                return new JsonResult(filename);
-            }
-            catch (Exception)
-            {
-
-                return new JsonResult("anonymous.png");
-            }
-        }
-
-        [Route("count/{id}")]
+        [Route("count/{shedId}")]
         [HttpGet]
-        public JsonResult GetCountUserInQueue(String id)
+        public JsonResult GetCountUserInQueue(String shedId)
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
            // var filter = "{PetrolFillStatus:join}";
 
-            var dbList = dbClient.GetDatabase("testdb").GetCollection<User>("User").Find(s => s.PetrolFillStatus == "join" && s.PetrolShed == id).ToList();
+            var dbList = dbClient.GetDatabase("testdb").GetCollection<User>("User").Find(s => s.PetrolFillStatus == "join" && s.PetrolShed == shedId).ToList();
 
             return new JsonResult(dbList);
            // return new JsonResult(10);

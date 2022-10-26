@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Models;
@@ -50,7 +51,7 @@ namespace WebApplication1.Controllers
 
             var filter = Builders<PetrolShed>.Filter.Eq("PetrolShedId", dep.PetrolShedId);
 
-            var update = Builders<PetrolShed>.Update.Set("PetrolShedName", dep.PetrolShedName);
+            var update = Builders<PetrolShed>.Update.Set("AvailableQuantity", dep.AvailableQuantity);
 
 
 
@@ -73,7 +74,26 @@ namespace WebApplication1.Controllers
             return new JsonResult("Deleted Successfully");
         }
 
+        [Route("petrolQty/{id}")]
+        [HttpGet]
+        public JsonResult GetCountUserInQueue(String id)
+        {
+            MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
+            // var filter = "{PetrolFillStatus:join}";
+
+            var dbList = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("PetrolShed").Find(s => s.PetrolShedId == id).ToList();
+
+            JsonResult jsonResult = new JsonResult(dbList);
+
+            Debug.WriteLine("Testirfan");
+            Debug.WriteLine("Testirfan2" + new JsonResult(dbList).Value);
+
+            return new JsonResult(dbList[0].PetrolShedName);
+            // return new JsonResult(10);
+        }
+
+         
 
     }
 }
