@@ -52,9 +52,14 @@ namespace WebApplication1.Controllers
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var filter = Builders<PetrolShed>.Filter.Eq("PetrolShedId", dep.PetrolShedId);
+            var dbListPetrolShed = dbClient.GetDatabase("testdb").GetCollection<PetrolShed>("PetrolShed").Find(s => s.PetrolShedId == dep.PetrolShedId).ToList();
 
-            var update = Builders<PetrolShed>.Update.Set("AvailableQuantity", dep.AvailableQuantity);
+            var shedPetrol = dbListPetrolShed[0].AvailableQuantity;
+
+            var totalQty = shedPetrol + dep.AvailableQuantity;
+
+            var filter = Builders<PetrolShed>.Filter.Eq("PetrolShedId", dep.PetrolShedId);
+            var update = Builders<PetrolShed>.Update.Set("AvailableQuantity", totalQty);
 
 
 
