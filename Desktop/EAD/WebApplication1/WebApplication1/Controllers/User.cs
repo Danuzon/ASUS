@@ -57,16 +57,19 @@ namespace WebApplication1.Controllers
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var filter = Builders<User>.Filter.Eq("UserName", usr.UserName);
+            var filterName = Builders<User>.Filter.Eq("UserName", usr.UserName);
+            var filterStatus = Builders<User>.Filter.Eq("PetrolFillStatus", "join");
 
-          //  var update = Builders<User>.Update.Set("UserName", emp.UserName)
-          //                                          .Set("PetrolShed", emp.PetrolShed)
-          //                                          .Set("PetrolFillStatus", emp.PetrolFillStatus)
-          //                                          .Set("PetrolFillQuantity", emp.PetrolFillQuantity);
+            var maleDoctorsFilter = Builders<User>.Filter.And(filterName,filterStatus);
+
+            //  var update = Builders<User>.Update.Set("UserName", emp.UserName)
+            //                                          .Set("PetrolShed", emp.PetrolShed)
+            //                                          .Set("PetrolFillStatus", emp.PetrolFillStatus)
+            //                                          .Set("PetrolFillQuantity", emp.PetrolFillQuantity);
             var update = Builders<User>.Update.Set("PetrolFillQuantity", usr.PetrolFillQuantity)
                                                 .Set("PetrolFillStatus", usr.PetrolFillStatus);
 
-            dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(filter, update);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(maleDoctorsFilter, update);
 
             return new JsonResult("Updated Successfully");
         }
