@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApplication1.Models
 {
+    // model class for shed
     public class PetrolShed
     {
         public ObjectId Id { get; set; }

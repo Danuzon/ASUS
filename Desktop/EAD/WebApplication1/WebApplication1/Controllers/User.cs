@@ -16,6 +16,8 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    // petrol User API logic implementd here
     public class UserController : ControllerBase
     {
 

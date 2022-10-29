@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApplication1.Models
 {
+    // model calss for User
     public class User
     {
         public ObjectId Id { get; set; }
