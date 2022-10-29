@@ -60,7 +60,7 @@ namespace WebApplication1.Controllers
             var filterName = Builders<User>.Filter.Eq("UserName", usr.UserName);
             var filterStatus = Builders<User>.Filter.Eq("PetrolFillStatus", "join");
 
-            var maleDoctorsFilter = Builders<User>.Filter.And(filterName,filterStatus);
+            var connectedFilter = Builders<User>.Filter.And(filterName,filterStatus);
 
             //  var update = Builders<User>.Update.Set("UserName", emp.UserName)
             //                                          .Set("PetrolShed", emp.PetrolShed)
@@ -69,7 +69,7 @@ namespace WebApplication1.Controllers
             var update = Builders<User>.Update.Set("PetrolFillQuantity", usr.PetrolFillQuantity)
                                                 .Set("PetrolFillStatus", usr.PetrolFillStatus);
 
-            dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(maleDoctorsFilter, update);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").UpdateOne(connectedFilter, update);
 
             return new JsonResult("Updated Successfully");
         }
@@ -80,10 +80,14 @@ namespace WebApplication1.Controllers
         {
             MongoClient dbClient = new MongoClient(_configuration.GetConnectionString("EadAppConnection"));
 
-            var filter = Builders<User>.Filter.Eq("UserName", userName);
+      
+            var filterName = Builders<User>.Filter.Eq("UserName", userName);
+            var filterStatus = Builders<User>.Filter.Eq("PetrolFillStatus", "join");
+
+            var connectedFilter = Builders<User>.Filter.And(filterName, filterStatus);
 
 
-            dbClient.GetDatabase("testdb").GetCollection<User>("User").DeleteOne(filter);
+            dbClient.GetDatabase("testdb").GetCollection<User>("User").DeleteOne(connectedFilter);
 
             return new JsonResult("Deleted Successfully");
         }
